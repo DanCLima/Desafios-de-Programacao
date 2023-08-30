@@ -11,14 +11,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Preto - minúsculo
-// Branco - maiúsculo
+// Peças pretas - minúsculo
+// Peças brancas - MAIÚSCULO 
 
 int posReiBranco[2];
 int posReiPreto[2];
 int check = 0;
 
-/* Verifica se todos os elementos da matriz são '.' e retorna 1 se sim */
+/*-------------------------------------------------------------------------------------------------------
+    Verifica se todos os elementos da matriz são '.' e retorna 1 se sim
+-------------------------------------------------------------------------------------------------------*/
 int verificaParada(char tabuleiro[10][10]) {
     int parada = 1;
 
@@ -33,6 +35,9 @@ int verificaParada(char tabuleiro[10][10]) {
     return parada;
 }
 
+/*-------------------------------------------------------------------------------------------------------
+    Preenche a matriz com caracteres zeros
+-------------------------------------------------------------------------------------------------------*/
 void inicializaMatriz(char matriz[10][10]) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
@@ -41,64 +46,61 @@ void inicializaMatriz(char matriz[10][10]) {
     }
 }
 
+/*-------------------------------------------------------------------------------------------------------
+    Exibe a matriz
+-------------------------------------------------------------------------------------------------------*/
 void exibeMatriz (int m, int n, char matriz[10][10]) {
     for (int i = 1; i < (m-1); i++) {
         for (int j = 1; j < (n-1); j++) {
-            printf("%c ", matriz[i][j]);
+            printf("%c", matriz[i][j]);
         }
         printf("\n");
     }
     printf("\n");
 }
 
+/*-------------------------------------------------------------------------------------------------------
+    Busca a posição do Rei Branco na matriz
+-------------------------------------------------------------------------------------------------------*/
 void posicaoReiBranco(char matriz[10][10]){
     for (int i = 1; i < 9; i++) {
         for (int j = 1; j < 9; j++) {
             if (matriz[i][j] == 'K') {
                 posReiBranco[0] = i;
-                posReiBranco[1] = j;    
+                posReiBranco[1] = j;
+                break;    
             }
         }
     }
 }
 
+/*-------------------------------------------------------------------------------------------------------
+    Busca a posição do Rei Preto na Matriz
+-------------------------------------------------------------------------------------------------------*/
 void posicaoReiPreto(char matriz[10][10]){
     for (int i = 1; i < 9; i++) {
         for (int j = 1; j < 9; j++) {
             if (matriz[i][j] == 'k') {
                 posReiPreto[0] = i;
-                posReiPreto[1] = j;    
+                posReiPreto[1] = j;  
+                break;  
             }
         }
     }
 }
 
+/*-------------------------------------------------------------------------------------------------------
+    Verifica se o Rei está em check pelo peão inimigo
+-------------------------------------------------------------------------------------------------------*/
 int verificaPeao (char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+    check = 0;
 
-    if (tabuleiro[posReiPreto[0]+1][posReiPreto[1]-1] == 'P') {
+    if ((tabuleiro[posReiPreto[0] + 1][posReiPreto[1] - 1] == 'P' || tabuleiro[posReiPreto[0] + 1][posReiPreto[1] + 1] == 'P') && check == 0) {
         check = 1;
-        printf("O Rei Preto esta em check!\n");
-    } else if (tabuleiro[posReiPreto[0]+1][posReiPreto[1]+1] == 'P') {
+        printf("black king is in check.\n");
+    } else if ((tabuleiro[posReiBranco[0] - 1][posReiBranco[1] + 1] == 'p' || tabuleiro[posReiBranco[0] - 1][posReiBranco[1] - 1] == 'p') && check == 0) {
         check = 1;
-        printf("O Rei Preto esta em check!\n");
-    }else if(tabuleiro[posReiBranco[0]-1][posReiBranco[1]+1] == 'p') {
-        check = 1;
-        printf("O Rei Branco esta em check!\n");
-    } else if (tabuleiro[posReiBranco[0]-1][posReiBranco[1]-1] == 'p'){ // 
-        check = 1;
-        printf("O Rei Branco esta em check!\n");
-    } else {
-        check = 0;
-    }
-    return check;
-}
-
-int verificaRei (char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
-    if (tabuleiro[posReiPreto[0]][posReiPreto[1]-1] == 'K' || tabuleiro[posReiPreto[0]][posReiPreto[1]+1] == 'K' || 
-        tabuleiro[posReiPreto[0]-1][posReiPreto[1]-1] == 'K' || tabuleiro[posReiPreto[0]-1][posReiPreto[1]] == 'K' || tabuleiro[posReiPreto[0]-1][posReiPreto[1]+1] == 'K' ||
-        tabuleiro[posReiPreto[0]+1][posReiPreto[1]-1] == 'K' || tabuleiro[posReiPreto[0]+1][posReiPreto[1]] == 'K' || tabuleiro[posReiPreto[0]+1][posReiPreto[1]+1] == 'K') {
-        check = 1;
-        printf("O Rei esta em check!\n");
+        printf("white king is in check.\n");
     } else {
         check = 0;
     }
@@ -106,12 +108,13 @@ int verificaRei (char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]
 }
 
 /*-------------------------------------------------------------------------------------------------------
-    Verifica se o Rei está sofrendo ataque de alguma torre e/ou rainha pela horizontal e/ou vertical
+    Verifica se o Rei está em check por alguma torre e/ou rainha pela horizontal e/ou vertical
 -------------------------------------------------------------------------------------------------------*/
 int verificaAtaqueOrtogonal(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+    check = 0;
 
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
-    for (int rei = 0, linha, coluna; rei < 2; rei++) {
+    for (int rei = 0, linha, coluna; rei < 2 && check == 0; rei++) {
         if (rei == 0) {
             linha = posReiPreto[0];
             coluna = posReiPreto[1];
@@ -121,48 +124,48 @@ int verificaAtaqueOrtogonal(char tabuleiro[10][10], int posReiBranco[2], int pos
         }
 
         //Verificando ataques acima do Rei
-        for (int i = linha; i > 0; i--) {
+        for (int i = linha; i > 0 && check == 0; i--) {
             if (tabuleiro[i-1][coluna] != '.') {
                 if (rei == 0 && tabuleiro[i-1][coluna] == 'R' || rei == 0 && tabuleiro[i-1][coluna] == 'Q' ||
                 rei == 1 && tabuleiro[i-1][coluna] == 'r' || rei == 1 && tabuleiro[i-1][coluna] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
                 break; // Peça irá bloquear o ataque
             } 
         }
 
         //Verificando ataques abaixo do Rei
-        for (int i = linha; i < 9; i++) {
+        for (int i = linha; i < 9 && check == 0; i++) {
             if (tabuleiro[i+1][coluna] != '.') {
                 if (rei == 0 && tabuleiro[i+1][coluna] == 'R' || rei == 0 && tabuleiro[i+1][coluna] == 'Q' ||
                 rei == 1 && tabuleiro[i+1][coluna] == 'r' || rei == 1 && tabuleiro[i+1][coluna] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
                 break; // Peça irá bloquear o ataque
             } 
         }
 
         //Verificando ataques à esquerda do Rei
-        for (int i = coluna; i > 0; i--) {
+        for (int i = coluna; i > 0 && check == 0; i--) {
             if (tabuleiro[linha][i-1] != '.') {
                 if (rei == 0 && tabuleiro[linha][i-1] == 'R' || rei == 0 && tabuleiro[linha][i-1] == 'Q' ||
                 rei == 1 && tabuleiro[linha][i-1] == 'r' || rei == 1 && tabuleiro[linha][i-1] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
                 break; // Peça irá bloquear o ataque
             } 
         }
 
         //Verificando ataques à direita do Rei
-        for (int i = coluna; i < 9; i++) {
+        for (int i = coluna; i < 9 && check == 0; i++) {
             if (tabuleiro[linha][i+1] != '.') {
                 if (rei == 0 && tabuleiro[linha][i+1] == 'R' || rei == 0 && tabuleiro[linha][i+1] == 'Q' ||
                 rei == 1 && tabuleiro[linha][i+1] == 'r' || rei == 1 && tabuleiro[linha][i+1] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
                 break; // Peça irá bloquear o ataque
             } 
@@ -171,12 +174,13 @@ int verificaAtaqueOrtogonal(char tabuleiro[10][10], int posReiBranco[2], int pos
 }
 
 /*-------------------------------------------------------------------------------------------------------
-    Verifica se o Rei está sofrendo ataque de algum bispo e/ou rainha pelas diagonais
+    Verifica se o Rei está em check por algum bispo e/ou rainha pelas diagonais
 -------------------------------------------------------------------------------------------------------*/
 int verificaAtaqueDiagonal(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+    check = 0;
 
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
-    for (int rei = 0, linha, coluna; rei < 2; rei++) {
+    for (int rei = 0, linha, coluna; rei < 2 && check == 0; rei++) {
         if (rei == 0) {
             linha = posReiPreto[0];
             coluna = posReiPreto[1];
@@ -186,59 +190,64 @@ int verificaAtaqueDiagonal(char tabuleiro[10][10], int posReiBranco[2], int posR
         }
 
         //Verificando ataques à diagonal superior esquerda do Rei
-        for (int i = linha, j = coluna; i > 0 && j > 0; i--, j--) {
+        for (int i = linha, j = coluna; i > 0 && j > 0 && check == 0; i--, j--) {
             if (tabuleiro[i-1][j-1] != '.') {
                 if (rei == 0 && tabuleiro[i-1][j-1] == 'B' || rei == 0 && tabuleiro[i-1][j-1] == 'Q' ||
                 rei == 1 && tabuleiro[i-1][j-1] == 'b' || rei == 1 && tabuleiro[i-1][j-1] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
                 break; // Peça irá bloquear o ataque
             } 
         }
 
         //Verificando ataques à diagonal superior direita do Rei
-        for (int i = linha, j = coluna; i > 0 && j < 9; i--, j++) {
+        for (int i = linha, j = coluna; i > 0 && j < 9 && check == 0; i--, j++) {
             if (tabuleiro[i-1][j+1] != '.') {
                 if (rei == 0 && tabuleiro[i-1][j+1] == 'B' || rei == 0 && tabuleiro[i-1][j+1] == 'Q' ||
                 rei == 1 && tabuleiro[i-1][j+1] == 'b' || rei == 1 && tabuleiro[i-1][j+1] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 } else
                 break; // Peça irá bloquear o ataque
             } 
         }        
 
         //Verificando ataques à diagonal inferior esquerda do Rei
-        for (int i = linha, j = coluna; i < 9 && j > 0; i++, j--) {
+        for (int i = linha, j = coluna; i < 9 && j > 0 && check == 0; i++, j--) {
             if (tabuleiro[i+1][j-1] != '.') {
                 if (rei == 0 && tabuleiro[i+1][j-1] == 'B' || rei == 0 && tabuleiro[i+1][j-1] == 'Q' ||
                 rei == 1 && tabuleiro[i+1][j-1] == 'b' || rei == 1 && tabuleiro[i+1][j-1] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
                 break; // Peça irá bloquear o ataque
             } 
         }
 
         //Verificando ataques à diagonal inferior direita do Rei
-        for (int i = linha, j = coluna; i < 9 && j < 9; i++, j++) {
+        for (int i = linha, j = coluna; i < 9 && j < 9 && check == 0; i++, j++) {
             if (tabuleiro[i+1][j+1] != '.') {
                 if (rei == 0 && tabuleiro[i+1][j+1] == 'B' || rei == 0 && tabuleiro[i+1][j+1] == 'Q' ||
                 rei == 1 && tabuleiro[i+1][j+1] == 'b' || rei == 1 && tabuleiro[i+1][j+1] == 'q') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }               
                 break; // Peça irá bloquear o ataque
             } 
         } 
     }
+    return check;
 }
 
-/* Verifica se o Rei sofre ataque do Cavalo */
+/*-------------------------------------------------------------------------------------------------------
+    Verifica se o Rei está em check pelo Cavalo inimigo
+-------------------------------------------------------------------------------------------------------*/
 int verificaCavalo(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+    check = 0;
+
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
-    for (int rei = 0, linha, coluna; rei < 2; rei++) {
+    for (int rei = 0, linha, coluna; rei < 2; rei++ && check == 0) {
         if (rei == 0) {
             linha = posReiPreto[0];
             coluna = posReiPreto[1];
@@ -253,14 +262,14 @@ int verificaCavalo(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[
             {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
         };
         
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8 && check == 0; i++) {
             int novaLinha = linha + movimentos[i][0];
             int novaColuna = coluna + movimentos[i][1];
 
-            if (novaLinha > 0 && novaLinha < 9 && novaColuna > 0 && novaColuna < 9) {
+            if (novaLinha > 0 && novaLinha < 9 && novaColuna > 0 && novaColuna < 9 && check == 0) {
                 if (rei == 0 && tabuleiro[novaLinha][novaColuna] == 'N' || rei == 1 && tabuleiro[novaLinha][novaColuna] == 'n') {
                     check = 1;
-                    printf("O Rei %s esta em check!\n", (rei == 0)? "Preto" : "Branco");
+                    printf("%s king is in check.\n", (rei == 0)? "black" : "white");
                 }
             }
         }
@@ -285,25 +294,25 @@ int main () {
         }
         
         parada = verificaParada(tabuleiro);
-        
         posicaoReiPreto(tabuleiro);
         posicaoReiBranco(tabuleiro);
         
         if (parada != 1) {
             printf("Game #%d: ", game);
-        }   
-
-        int verifica = verificaPeao(tabuleiro, posReiBranco, posReiPreto);
-        verifica = verificaRei(tabuleiro, posReiBranco, posReiPreto);
-        verifica = verificaAtaqueOrtogonal(tabuleiro, posReiBranco, posReiPreto);
-        verificaAtaqueDiagonal(tabuleiro, posReiBranco, posReiPreto);
-        verificaCavalo(tabuleiro, posReiBranco, posReiPreto);
-
-        if (check == 0 && parada != 1) {
-            printf("Nenhum Rei esta em cheque!\n");
-        }        
-
-        // exibeMatriz(10, 10, tabuleiro);
+            verificaPeao(tabuleiro, posReiBranco, posReiPreto);
+            if (check == 0) {
+                verificaAtaqueOrtogonal(tabuleiro, posReiBranco, posReiPreto);
+                if (check == 0) {
+                    verificaAtaqueDiagonal(tabuleiro, posReiBranco, posReiPreto);
+                    if (check == 0) {
+                        verificaCavalo(tabuleiro, posReiBranco, posReiPreto);
+                        if (check == 0){
+                            printf("no king is in check.\n");
+                        }
+                    } 
+                } 
+            }            
+        }
         game++;
     }
 }
