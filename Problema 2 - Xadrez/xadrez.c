@@ -245,7 +245,7 @@ void verificaCavalo(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto
     check = 0;
 
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
-    for (int rei = 0, linha, coluna; rei < 2; rei++ && check == 0) {
+    for (int rei = 0, linha, coluna; rei < 2 && check == 0; rei++) {
         if (rei == 0) {
             linha = posReiPreto[0];
             coluna = posReiPreto[1];
