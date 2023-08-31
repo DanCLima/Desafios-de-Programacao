@@ -8,27 +8,26 @@ int main(int argc, char const *argv[])
     char comandos[10];
 
     scanf("%d", &qtdComandos);
-    // printf("qtd comandos eh: %d\n", qtdComandos);
+    getchar();      // Consome o '\n'
 
-    
     for (int i = 0; i < qtdComandos; i++) {
-        scanf_s(" %s", &comandos);
-        int tam = strlen(comandos);
-        printf("\n tam eh %d\n", tam);
+        fgets(comandos, sizeof(comandos), stdin);       // Se a entrada for redirecionada de um arquivo, o caracter '\n' deve ser removido da string
+        int tam = strlen(comandos);     
 
-        
-        if (comandos[4] == 'u'&& vol >= 0 && vol < 10) {
+        // Verifica se o o último caracter lido é uma quebra de linha e o remove
+        if (tam > 0 && comandos[tam-1] == '\n') {
+            tam--;
+            comandos[tam] = '\0';      
+        }
+
+        if (tam == 8 && vol < 10) {
             vol++;
-        } else if (comandos[4] == 'd'&& vol > 0 && vol <= 10) {
+        } else if (tam == 9 && vol > 0) {
             vol--;
         }
         comandos[0] = '\0';
-        printf("%d\n", i);
-
     }
-
     printf("%d", vol);
-
     
     return 0;
 }
