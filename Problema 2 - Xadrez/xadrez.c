@@ -92,7 +92,7 @@ void posicaoReiPreto(char matriz[10][10]){
 /*-------------------------------------------------------------------------------------------------------
     Verifica se o Rei está em check pelo peão inimigo
 -------------------------------------------------------------------------------------------------------*/
-int verificaPeao (char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+void verificaPeao (char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
     check = 0;
 
     if ((tabuleiro[posReiPreto[0] + 1][posReiPreto[1] - 1] == 'P' || tabuleiro[posReiPreto[0] + 1][posReiPreto[1] + 1] == 'P') && check == 0) {
@@ -104,13 +104,12 @@ int verificaPeao (char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2
     } else {
         check = 0;
     }
-    return check;
 }
 
 /*-------------------------------------------------------------------------------------------------------
     Verifica se o Rei está em check por alguma torre e/ou rainha pela horizontal e/ou vertical
 -------------------------------------------------------------------------------------------------------*/
-int verificaAtaqueOrtogonal(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+void verificaAtaqueOrtogonal(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
     check = 0;
 
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
@@ -176,7 +175,7 @@ int verificaAtaqueOrtogonal(char tabuleiro[10][10], int posReiBranco[2], int pos
 /*-------------------------------------------------------------------------------------------------------
     Verifica se o Rei está em check por algum bispo e/ou rainha pelas diagonais
 -------------------------------------------------------------------------------------------------------*/
-int verificaAtaqueDiagonal(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+void verificaAtaqueDiagonal(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
     check = 0;
 
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
@@ -237,13 +236,12 @@ int verificaAtaqueDiagonal(char tabuleiro[10][10], int posReiBranco[2], int posR
             } 
         } 
     }
-    return check;
 }
 
 /*-------------------------------------------------------------------------------------------------------
     Verifica se o Rei está em check pelo Cavalo inimigo
 -------------------------------------------------------------------------------------------------------*/
-int verificaCavalo(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
+void verificaCavalo(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[2]) {
     check = 0;
 
     /* Alternando os 2 reis. 0 Para o preto e 1 para o Branco */
@@ -274,7 +272,6 @@ int verificaCavalo(char tabuleiro[10][10], int posReiBranco[2], int posReiPreto[
             }
         }
     }
-    return check;
 }
 
 int main () {
@@ -315,4 +312,5 @@ int main () {
         }
         game++;
     }
+    printf("\n");
 }

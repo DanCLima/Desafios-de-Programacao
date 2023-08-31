@@ -51,16 +51,15 @@ void binarizaMatriz(int m, int n, int** matriz) {
 *------------------------------------------------------------------------*/
 void adjacencia(int m, int n, int** matriz) {
     for (int i = 1; i < m-1; i++) {
-        for (int j = 1; j < n-1; j++) {
-            if(matriz[i][j] == 42) {
-                matriz[i][j-1] = (matriz[i][j-1] == 42) ? 42 : matriz[i][j-1] + 1;
-                matriz[i-1][j-1] = (matriz[i-1][j-1] == 42) ? 42 : matriz[i-1][j-1] + 1;
-                matriz[i-1][j] = (matriz[i-1][j] == 42) ? 42 : matriz[i-1][j]++;
-                matriz[i-1][j+1] = (matriz[i-1][j+1] == 42) ? 42 : matriz[i-1][j+1] + 1;
-                matriz[i][j+1] = (matriz[i][j+1] == 42) ? 42 : matriz[i][j+1] + 1;
-                matriz[i+1][j+1] = (matriz[i+1][j+1] == 42) ? 42 : matriz[i+1][j+1] + 1;
-                matriz[i+1][j] = (matriz[i+1][j] == 42) ? 42 : matriz[i+1][j] + 1;
-                matriz[i+1][j-1] = (matriz[i+1][j-1] == 42) ? 42 : matriz[i+1][j-1] + 1;
+        for (int j = 1; j < n-1; j++) {     // Percorrendo toda a matriz
+            if (matriz[i][j] == 42) {       // Verifica se o elemento atual é uma mina
+                for (int k = i-1; k <= i+1; k++) {      // Percorre os 8 vizinhos
+                    for (int l = j-1; l <= j+1; l++) {
+                        if (matriz[k][l] != 42)  {      // Se o vizinho não for uma mina, o valor é incrementado
+                            matriz[k][l]++;
+                        }
+                    }   
+                }             
             }
         }  
     }
@@ -101,7 +100,7 @@ int main () {
         adjacencia(p, q, matriz);
         ajustaMatriz(p, q, matriz);
         if (p-2 > 0 && q-2 > 0) {
-            printf("Campo #%d:\n", game);
+            printf("Field #%d:\n", game);
             printaMatriz(p, q, matriz);
         }
 

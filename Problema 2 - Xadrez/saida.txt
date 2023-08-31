@@ -75,3 +75,4 @@ Game #74: white king is in check.
 Game #75: no king is in check.
 Game #76: white king is in check.
 Game #77: no king is in check.
+
