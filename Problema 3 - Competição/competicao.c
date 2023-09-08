@@ -13,9 +13,11 @@ typedef struct {
     int problemasSumetidos[8];
 } Desafios;
 
-void cadastraCompetidor(Desafios *competidor, int nProblema, int tempo, char nota) {
+void cadastraCompetidor(Desafios *competidor, int nProblema, int tempo, char nota, int penalidade) {
     competidor->problema[nProblema].tempo = tempo;
     competidor->problema[nProblema].nota = nota;
+    competidor->problema[nProblema].penalidade += penalidade;
+    competidor->problemasSumetidos[nProblema] = 1;      //  Indica que o competidor submeteu o problema x | x = posição do vetor
 }
 
 /* Inicia o vetor competidor */
@@ -33,6 +35,12 @@ void iniciaVetor (int *vetor, int tam) {
     // for (int i = 0; i < tam; i++) {
     //     printf("%d ", vetor[i]);
     // }
+}
+
+void liberaMemoria(Desafios *competidor[]) {
+    for (int i = 0; i < 100; i++) {
+        free(competidor[i]);
+    }
 }
 
 /*----------------------------------------------------+
@@ -55,12 +63,28 @@ int main(int argc, char const *argv[])
     iniciaCompetidores(competidor);
 
     nEntrada = -1;
+    int novaEntrada = 1;
     while(fgets(buffer, sizeof(buffer), stdin) != NULL) {
 
         if (strcmp(buffer, "\n") == 0) {            //Por algum motivo tá lendo o raio de 2 '\n'
+
+            if (nEntrada >= 0) {     // Limpando a memória para cada entrada diferente
+                printf("Entrada %d:\n", nEntrada+1);
+                for (int i = 0; i < 100; i++) {
+                    if (competidor[i] != NULL) {
+                        for (int j = 0; j < 9; j++) {
+                            if (competidor[i]->problemasSumetidos[j] == 1){
+                                printf("Competidor %d problema %d tempo %d nota %c penalidade %d\n", i+1, j+1, competidor[i]->problema[j].tempo, competidor[i]->problema[j].nota, competidor[i]->problema[j].penalidade);
+                            }  
+                        }
+                    }  
+                }
+                iniciaCompetidores(competidor);     // É preciso reiniciar a estrutura de dados a cada entrada
+            }
+            
             nEntrada++;
-            printf("Entrada %d: %s\n", nEntrada, buffer);
-            // printf("Tam buffer eh: %d\n", strlen(buffer));
+
+        
         } else {
             sscanf(buffer, "%d %d %d %c", &nCompetidor, &nProblema, &tempo, &nota);
             
@@ -68,30 +92,41 @@ int main(int argc, char const *argv[])
                 competidor[nCompetidor-1] = (Desafios *)malloc(sizeof(Desafios));
 
                 iniciaVetor(competidor[nCompetidor-1]->problemasSumetidos, 8);
-                competidor[nCompetidor-1]->problema->tempo = 0;
-                competidor[nCompetidor-1]->problema->penalidade = 0;
-                competidor[nCompetidor-1]->problema->nota = '\0';
 
-                cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota);        // Cadastra o competidor no primeiro registro. Então se ele já apresentou algum problema, nao
+                /* Todos os problemas devem ser iniciados! */
+                for (int i = 0; i < 9; i++) {
+                    competidor[nCompetidor-1]->problema[i].tempo = 0;
+                    competidor[nCompetidor-1]->problema[i].penalidade = 0;
+                    competidor[nCompetidor-1]->problema[i].nota = '\0';
+                }
+            }  
+
+            /* Lógica para sobrescrever os valores da struct */
+            if (competidor[nCompetidor-1]->problema[nProblema-1].nota != 'C') {
+                if (competidor[nCompetidor-1]->problema[nProblema-1].nota == 'I') {
+                    cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota, 1);
+                } else {
+                    cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota, 0);
+                }
             } else {
-                /* Lógica para sobrescrever os valores da struct */
+                cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota, 0);
             }
-            
-
-            // printf("Competidor %d problema %d tempo %d nota %c\n", nCompetidor, nProblema, competidor[nCompetidor-1]->problema[nProblema-1].tempo, competidor[nCompetidor-1]->problema[nProblema-1].nota);
-
-        }
+        }        
     }
-    // printf("Competidor %d problema %d tempo %d nota %c\n", 1, 2, competidor[0]->problema[1].tempo, competidor[0]->problema[1].nota);
-    // printf("Competidor %d problema %d tempo %d nota %c\n", 3, 1, competidor[2]->problema[0].tempo, competidor[2]->problema[nProblema-1].nota);
-    // printf("Competidor %d problema %d penalidade %d\n", 3, 1, competidor[2]->problema[0].penalidade);
 
+
+    printf("Entrada %d:\n", nEntrada+1);
     for (int i = 0; i < 100; i++) {
         if (competidor[i] != NULL) {
-            printf("Competidor %d problema %d tempo %d nota %c penalidade %d\n", i+1, 1, competidor[i]->problema[0].tempo, competidor[i]->problema[0].nota, competidor[i]->problema[0].penalidade);
-        }
+            for (int j = 0; j < 9; j++) {
+                if (competidor[i]->problemasSumetidos[j] == 1){
+                    printf("Competidor %d problema %d tempo %d nota %c penalidade %d\n", i+1, j+1, competidor[i]->problema[j].tempo, competidor[i]->problema[j].nota, competidor[i]->problema[j].penalidade);
+                }  
+            }
+        }  
     }
-    
+
+    liberaMemoria(competidor);
 
     return 0;
 }
