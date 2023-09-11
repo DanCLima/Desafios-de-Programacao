@@ -16,11 +16,12 @@ typedef struct {
     int ranking;
 } Desafios;
 
-void cadastraCompetidor(Desafios *competidor, int nProblema, int tempo, char nota, int penalidade) {
-    competidor->problema[nProblema].tempo = tempo;
-    competidor->problema[nProblema].nota = nota;
-    competidor->problema[nProblema].penalidade += penalidade;
-    competidor->problemasSumetidos[nProblema] = 1;      //  Indica que o competidor submeteu o problema x | x = posição do vetor
+void cadastraCompetidor(Desafios *competidor[], int nCompetidor, int nProblema, int tempo, char nota, int penalidade) {
+    competidor[nCompetidor]->problema[nProblema].tempo = tempo;
+    competidor[nCompetidor]->problema[nProblema].nota = nota;
+    competidor[nCompetidor]->problema[nProblema].penalidade += penalidade;
+    // competidor[nCompetidor]->problemasSumetidos[nProblema] = 1;      //  Indica que o competidor submeteu o problema x | x = posição do vetor
+    // competidor[nCompetidor]->tempoTotal = 0;        // Como o tempo total vai ser calculado na classificação, ele vai ser iniciado com 0 em todo cadastro
 }
 
 /* Inicia o vetor competidor */
@@ -50,15 +51,16 @@ void classificacao(Desafios *competidor[]) {
     for (int i = 0; i < 100; i++) {
         if (competidor[i] != NULL) {
             for (int j = 0; j < 9; j++) {
+
                 if (competidor[i]->problema[j].nota == 'C'){
                     competidor[i]->problemasResolvidos += 1;
                     competidor[i]->tempoTotal += competidor[i]->problema[j].tempo;
 
-                    if (competidor[i]->problema[j].penalidade == 1) {
-                        competidor[i]->tempoTotal += 20;
-                    }
+                    if (competidor[i]->problema[j].penalidade != 0) {
+                        competidor[i]->tempoTotal += competidor[i]->problema[j].penalidade * 20;
+                    }                 
                 }     
-            }
+            }        
         }  
     }
 }
@@ -69,39 +71,63 @@ void classificarCompetidores(Desafios *competidor[], int totalCompetidores) {
 
     // printf("Total de competidores: %d\n", totalCompetidores);
     // printf("Indices: ");
-    for (int i = 0; i < totalCompetidores; i++) {
-        indices[i] = i;
-        // printf("%d ", indices[i]);
+    for (int i = 0, j = 0; j < totalCompetidores; i++) {
+        if (competidor[i] != NULL) {
+            indices[j] = i;
+            j++;
+        }
     }
     // printf("\n");
 
-    // Ranqueando todos os competidores de acordo com o seu cadastro
-    for (int i = 0, j = 0; i < 100 && j < totalCompetidores; i++) {
-        if (competidor[i] != NULL) {
-            competidor[i]->ranking = j;
-            j++;
-        }  
+    printf("%d competidores com indices: ", totalCompetidores);
+    for (int i = 0; i < totalCompetidores; i++) {
+        printf("%d ", indices[i] + 1);
     }    
+    printf("\n");    
+
+    // Ranqueando todos os competidores de acordo com o seu cadastro
+    // for (int i = 0, j = 0; i < 100 && j < totalCompetidores; i++) {
+    //     if (competidor[i] != NULL) {
+    //         competidor[i]->ranking = j;
+    //         j++;
+    //     }  
+    // }    
 
     // Ranquear os participantes com base nos critérios
-    for (int i = 0; i < totalCompetidores; i++) {
+    // int maior = -1;
+    // int comp;
+    for (int i = 0, verifica = 0, contaINull = 0; i < 100 && verifica < totalCompetidores-1; i++) {
         if (competidor[i] != NULL) {
-            for (int j = i + 1; j < totalCompetidores; j++) {
+            for (int j = i + 1, contaJNull = contaINull; j < 100 && verifica < totalCompetidores; j++) {
+                // if (competidor[i]->problemasResolvidos > maior) {
+                //     maior = competidor[i]->problemasResolvidos;
+                //     comp = i;
+                // }
+                
                 if (competidor[j] != NULL) {
-                    if (competidor[i]->problemasResolvidos < competidor[j]->problemasResolvidos ||
-                        (competidor[i]->problemasResolvidos == competidor[j]->problemasResolvidos &&
-                        competidor[i]->tempoTotal > competidor[j]->tempoTotal) ||
-                        (competidor[i]->problemasResolvidos == competidor[j]->problemasResolvidos &&
-                        competidor[i]->tempoTotal == competidor[j]->tempoTotal && i > j)) {                 
+                    if (competidor[i]->problemasResolvidos < competidor[j]->problemasResolvidos) {
+                        int temp = indices[i-contaINull];
+                        indices[i-contaINull] = indices[j-contaJNull];
+                        indices[j-contaJNull] = temp;
 
-                        int temp = competidor[i]->ranking;
-                        competidor[i]->ranking = competidor[j]->ranking;
-                        competidor[j]->ranking = temp;
-                    }
+                        // printf("indice %d trocou com %d!\n",i-contaINull, j-contaJNull);
+                    }  
+                } else {
+                    contaJNull++;
                 }
             }
+            verifica++;    
+        } else {
+            contaINull++;
         }
+        // printf("A maior qtd de problemas resolvidos eh: %d competidor %d\n", maior, comp);
     }
+
+    printf("%d competidores com indices: ", totalCompetidores);
+    for (int i = 0; i < totalCompetidores; i++) {
+        printf("%d ", indices[i] + 1);
+    }    
+    printf("\n");    
 }
 
 void exibeClassificacaoTabular(Desafios *competidor[]) {
@@ -176,7 +202,7 @@ int main(int argc, char const *argv[])
                 iniciaVetor(competidor[nCompetidor-1]->problemasSumetidos, 8);
                 competidor[nCompetidor-1]->ranking = -1;
                 competidor[nCompetidor-1]->tempoTotal = 0;
-                competidor[nCompetidor-1]->problemasResolvidos = 0;
+                competidor[nCompetidor-1]->problemasResolvidos = 0;              
 
                 /* Todos os problemas devem ser iniciados! */
                 for (int i = 0; i < 9; i++) {
@@ -190,12 +216,10 @@ int main(int argc, char const *argv[])
             /* Lógica para sobrescrever os valores da struct */
             if (competidor[nCompetidor-1]->problema[nProblema-1].nota != 'C') {
                 if (competidor[nCompetidor-1]->problema[nProblema-1].nota == 'I') {
-                    cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota, 1);
+                    cadastraCompetidor(competidor, nCompetidor-1, nProblema-1, tempo, nota, 1);                    
                 } else {
-                    cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota, 0);
+                    cadastraCompetidor(competidor, nCompetidor-1, nProblema-1, tempo, nota, 0);             
                 }
-            } else {
-                cadastraCompetidor(competidor[nCompetidor-1], nProblema-1, tempo, nota, 0);
             }
         }        
     }
