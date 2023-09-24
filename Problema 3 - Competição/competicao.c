@@ -9,7 +9,7 @@ typedef struct {
 } Problema;
 
 typedef struct {
-    Problema problema[8];   // Criando um vetor com 9 problemas
+    Problema problema[8];   // Criando um vetor com 9 problemas         ERRO AQUI, O VETOR ESTÁ APENAS COM TAMANHO DE 8
     int problemasSumetidos[8];
     int tempoTotal;
     int problemasResolvidos;
