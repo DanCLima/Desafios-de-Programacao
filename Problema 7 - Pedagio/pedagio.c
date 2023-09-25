@@ -1,18 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define MAX 6
+#include <math.h>
+#define MAX 1000
 
 typedef struct {
-    char placa[20];
+    char placa[21];
     int dia;
     int hora;
     int sentido;        // 0 - entrar na rodovia 1 - sair da rodovia
     int km;
+    int contabilizado;      // 0 - não foi usado na soma geral 1 - foi usado na soma geral
+    float valor;      
 } Viagem;
 
 Viagem registros[MAX];
-int ordem[MAX];
 
 void iniciaViagem (Viagem *v) {
     for (int i = 0; i < MAX; i++) {
@@ -21,6 +23,8 @@ void iniciaViagem (Viagem *v) {
         v[i].hora = -1;
         v[i].sentido = -1;
         v[i].km = -1;
+        v[i].contabilizado = 0;
+        v[i].valor = 0.0;
     }
 }
 
@@ -37,18 +41,6 @@ void cadastraViagem (Viagem *v, char *placa, int dia, int hora, int sentido, int
     v->km = km;
 }
 
-void exibeViagem (Viagem *v) {
-    for (int i = 0; i < MAX; i++) {
-        printf("Registro %d\n", i);
-        printf("Placa: %s\n", v[i].placa);
-        printf("Dia: %d\n", v[i].dia);
-        printf("Hora: %d\n", v[i].hora);
-        printf("Sentido: %d\n", v[i].sentido);
-        printf("Km: %d\n", v[i].km);
-        printf("\n");
-    }
-}
-
 /* Remove a quebra de linha da entrada e retorna o tamanho da string */
 int removeQuebraLinha (char *buffer) {
     int tam = strlen(buffer);
@@ -60,8 +52,8 @@ int removeQuebraLinha (char *buffer) {
     return tam;
 }
 
-void iniciaOrdem (int *ordem) {
-    for (int i = 0; i < MAX; i++) {
+void iniciaOrdem (int *ordem, int qtdRegistro) {
+    for (int i = 0; i < qtdRegistro; i++) {
         ordem[i] = i;
     }
 }
@@ -83,10 +75,14 @@ int ordenaPlaca(const void *a, const void *b) {
 }
 
 
-void ordena (Viagem *v, int *ordem) {
-    qsort(ordem, MAX, sizeof(int), ordenaPlaca);
+void ordena (Viagem *v, int *ordem, int qtdRegistro) {
+    qsort(ordem, qtdRegistro, sizeof(int), ordenaPlaca);
+}
 
-    for (int i = 0; i < MAX; i++) {
+void exibeViagem (Viagem *v, int *ordem, int qtdRegistros) {
+        printf("\n");
+
+    for (int i = 0; i < qtdRegistros; i++) {
         int indice = ordem[i]; // O índice ordenado
 
         printf("Registro %d\n", indice);
@@ -95,7 +91,63 @@ void ordena (Viagem *v, int *ordem) {
         printf("Hora: %d\n", v[indice].hora);
         printf("Sentido: %d\n", v[indice].sentido);
         printf("Km: %d\n", v[indice].km);
+        printf("Valor: %.3f\n", v[indice].valor);
         printf("\n");
+    }
+}
+
+void calculaPedagio (Viagem *v, int *ordem, int *taxas, int qtdRegistro) {
+    for (int i = 0; i < qtdRegistro-1; i++) {
+        float taxaAtual = 0.0;
+        int indice1 = ordem[i];
+        int indice2 = ordem[i+1];
+
+        if (strcmp(v[indice1].placa, v[indice2].placa) == 0 && v[indice1].sentido != v[indice2].sentido) {
+            /* Realizando o cálculo do pedágio e armazenando sempre na struct com o sentido enter */
+            if (v[indice1].sentido == 0) {
+                taxaAtual = (taxas[v[indice1].hora])/100.00;       // Pegando a taxa no sentido que entrou na pista
+                v[indice1].valor += taxaAtual * abs(v[indice1].km - v[indice2].km);     // Realizando o cálculo do pedágio
+            }
+        }
+    }
+
+    for (int i = 0; i < qtdRegistro-1; i++) {
+        int indice1 = ordem[i];
+        float contaViagens = 1.0;
+
+        /* Verificando se a primeira estrutura está no sentido enter */
+        if (v[indice1].contabilizado == 0 && v[indice1].sentido == 0 && v[indice1].valor != 0) {
+
+            for (int j = i+1; j < qtdRegistro; j++) {
+                int indice2 = ordem[j];
+
+                /* A segunda placa tem que ser igual a primeira, o sentido também tem que ser enter e o valor diferente de 0 */
+                if (strcmp(v[indice1].placa, v[indice2].placa) == 0 && v[indice2].contabilizado == 0 && v[indice2].sentido == 0) {
+                    // printf("Entrou nas placas [%d]-%s [%d]-%s\n", indice1, v[indice1].placa, indice2, v[indice2].placa);
+
+                    if (v[indice2].valor != 0) {
+                        v[indice1].valor += v[indice2].valor;  
+                        v[indice2].valor = 0.0;       // Assim que o valor for somado ao primeiro registro, os outros devem ser zerados
+                        contaViagens++;  
+                    }
+                    
+                    v[indice2].contabilizado = 1;       // O valor da struct já foi somado à primeira struct com a mesma placa
+                    
+                }
+            }
+            v[indice1].valor += contaViagens + 2;       // Cada viagem custa 1 dolar e cada conta tem uma taxa de 2 dolares
+            v[indice1].contabilizado = 1;
+        }
+    }
+}
+
+void saidaEsperada (Viagem *v, int *ordem, int qtdRegistro) {
+    for (int i = 0; i < qtdRegistro; i++) {
+        int indice = ordem[i];
+
+        if (v[indice].valor != 0) {
+            printf("%s $%.2f\n", v[indice].placa, v[indice].valor);
+        }
     }
 }
 
@@ -108,12 +160,12 @@ int main(int argc, char const *argv[])
     char buffer[100];
     char sentido[6]; // Entrada ou saida
     char placa[21];
+    int *ordem;     // Vetor que irá guardar a ordenação das structs
 
     scanf("%d", &entrada);
     getchar();
  
     iniciaViagem(registros);   
-    iniciaOrdem(ordem); 
 
     contaEntrada = 0;
     while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
@@ -121,30 +173,35 @@ int main(int argc, char const *argv[])
 
         if (buffer[0] == '\n') {
             contaEntrada++;
-            contaRegistro = 0;      // Sempre que houver uma nova entrada o conta registro deve ser zerado
 
             if (contaEntrada > 1) {
                 printf("\n"); 
-                // exibeViagem(registros);     // Exibindo os registros da entrada anterior
 
-                ordena(registros, ordem);
-                // exibeViagem(registros);   
+                /* O vetor ordem é alocado de acordo com a quantidade de registros */
+                ordem = (int*)malloc(sizeof(int) * contaRegistro); 
+                iniciaOrdem(ordem, contaRegistro); 
+                ordena(registros, ordem, contaRegistro);
+                calculaPedagio(registros, ordem, taxas, contaRegistro);
+                // exibeViagem(registros, ordem, contaRegistro);
+                saidaEsperada(registros, ordem, contaRegistro);
+                free(ordem);
 
                 iniciaViagem(registros);       // Reiniciando a struct para a nova entrada
-                }
-                    
-            printf("Entrada %d\n", contaEntrada);
+            }
+            contaRegistro = 0;      // Sempre que houver uma nova entrada o conta registro deve ser zerado
+    
+            // printf("Entrada %d\n", contaEntrada);
             /* Lendo as taxas */
             scanf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", &taxas[0], &taxas[1], &taxas[2], &taxas[3], 
                 &taxas[4], &taxas[5], &taxas[6], &taxas[7], &taxas[8], &taxas[9], &taxas[10], &taxas[11], &taxas[12], &taxas[13], &taxas[14],
                 &taxas[15], &taxas[16], &taxas[17], &taxas[18], &taxas[19], &taxas[20], &taxas[21], &taxas[22], &taxas[23]);
 
             /* Exibindo as taxas */
-            printf("Taxas: ");
-            for (int i = 0; i < 24; i++) {
-                printf("%d ", taxas[i]);
-            }
-            printf("\n");
+            // printf("Taxas: ");
+            // for (int i = 0; i < 24; i++) {
+            //     printf("%d ", taxas[i]);
+            // }
+            // printf("\n");
             entrada--;
         } else {
             sscanf(buffer, "%s %d:%d:%d:%d %s %d", placa, &mes, &dia, &hora, &segundo, sentido, &km);
@@ -152,9 +209,13 @@ int main(int argc, char const *argv[])
             contaRegistro++;
         } 
     }
-    ordena(registros, ordem);
-    // exibeViagem(registros); 
-
+    ordem = (int*)malloc(sizeof(int) * contaRegistro); 
+    iniciaOrdem(ordem, contaRegistro); 
+    ordena(registros, ordem, contaRegistro);
+    calculaPedagio(registros, ordem, taxas, contaRegistro);
+    // exibeViagem(registros, ordem, contaRegistro);
+    saidaEsperada(registros, ordem, contaRegistro);
+    free(ordem);
 
     return 0;
 }

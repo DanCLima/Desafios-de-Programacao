@@ -1,0 +1,6 @@
+1
+
+15 13 73 25 67 37 94 98 34 66 42 34 98 56 28 14 86 83 82 49 4 92 91 99 
+ciqsvtzekmjpjylrjf 09:02:03:40 exit 737
+ciqsvtzekmjpjylrjf 09:02:18:02 enter 198
+ciqsvtzekmjpjylrjf 09:20:15:53 exit 456
