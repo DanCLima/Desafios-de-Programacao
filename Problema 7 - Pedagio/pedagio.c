@@ -175,7 +175,9 @@ int main(int argc, char const *argv[])
             contaEntrada++;
 
             if (contaEntrada > 1) {
-                printf("\n"); 
+                if (contaEntrada > 2) {
+                    printf("\n"); 
+                }
 
                 /* O vetor ordem é alocado de acordo com a quantidade de registros */
                 ordem = (int*)malloc(sizeof(int) * contaRegistro); 
@@ -209,6 +211,8 @@ int main(int argc, char const *argv[])
             contaRegistro++;
         } 
     }
+    printf("\n"); 
+
     ordem = (int*)malloc(sizeof(int) * contaRegistro); 
     iniciaOrdem(ordem, contaRegistro); 
     ordena(registros, ordem, contaRegistro);
