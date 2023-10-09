@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------+
 |            UNIFAL - Universidade Federal de Alfenas            |
 |              BACHARELADO EM CIÊNCIA DA COMPUTAÇÃO              |
-|       Trabalho....:   Problema 10                               |
+|       Trabalho....:   Problema 10                              |
 |       Disciplina..:   Desafios de Programação                  |
 |       Professor...:   Luiz Eduardo da Silva                    |
 |       Aluno.......:   Daniel da Costa Lima                     |
