@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+/* Remove a quebra de linha no final do buffer e retorna o tamanho da string alterada */
 int remover_quebra_linha (char *buffer) {
     int tam = strlen(buffer);
 
@@ -22,6 +23,7 @@ int remover_quebra_linha (char *buffer) {
     return tam;
 }
 
+/* Realiza a soma dos algarismos da string passada como parâmetro */
 int somar_algarismos2 (char *string, int tam) {
     int soma = 0;
 
@@ -33,6 +35,7 @@ int somar_algarismos2 (char *string, int tam) {
     return soma;
 }
 
+/* Realiza a soma dos algarismos do número passado como parâmetro */
 int somar_algarismos (int num) {
     int soma = 0;
 
@@ -45,7 +48,10 @@ int somar_algarismos (int num) {
     return soma;
 }
 
-
+/* Realiza a fatoração do número passado como parâmetro e retorna a soma de todos os ALGARISMOS da fatoração. 
+    Ex: 
+        Fatoração:              4937775 = 3 * 5 * 5 * 65837 
+        Soma dos algarismos:    3 + 5 + 5 + 6 + 5 + 8 + 3 + 7 = 42                                          */
 long int somar_algarismos_fatorados (long int num) {
     long int i;
     long int c;
@@ -92,10 +98,30 @@ long int somar_algarismos_fatorados (long int num) {
                 temp = temp/10;
             }
             soma += temp;
+        } else {
+            soma += c;
         }
     }
 
     return soma;
+}
+
+/* Verifica se o número passado como parâmetro é primo. Retorna 1 para sim e 0 para não. */
+int verificar_numero_primo (long int num) {
+    int e_primo = 1;
+
+    for (int i = 2; i <= sqrt(num); i +=2 ) {
+        if (num % i == 0) {
+            e_primo = 0;
+            break;
+        }
+        
+        /* Verificar os números 2 3 5 7 ...*/
+        if (i == 2) {
+            i--;
+        }
+    }
+    return e_primo;
 }
 
 int main(int argc, char const *argv[])
@@ -109,14 +135,16 @@ int main(int argc, char const *argv[])
 
     while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
         int tam = remover_quebra_linha(buffer);
-        int soma_algarismos, soma_algarismos_fatorados;
+        int soma_algarismos, soma_algarismos_fatorados, e_primo;
         int numero_int = atoi(buffer);
 
         while (1) {
             soma_algarismos = somar_algarismos(numero_int);
             soma_algarismos_fatorados = somar_algarismos_fatorados(numero_int);
+            e_primo = verificar_numero_primo(numero_int);
             
-            if (soma_algarismos == soma_algarismos_fatorados) {
+            /* O número de Smith não pode ser um número primo! */
+            if (soma_algarismos == soma_algarismos_fatorados && e_primo != 1) {
                 break;
             }
             
