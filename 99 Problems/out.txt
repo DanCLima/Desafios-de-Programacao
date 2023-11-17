@@ -1,0 +1,98 @@
+99
+99
+Valor: 100
+Limite inferior: [99] distância: 1
+Limite superior: [199] distância: 99
+Resultado: 99
+Valor: 158
+Limite inferior: [99] distância: 59
+Limite superior: [199] distância: 41
+Resultado: 199
+Valor: 150
+Limite inferior: [99] distância: 51
+Limite superior: [199] distância: 49
+Resultado: 199
+Valor: 200
+Limite inferior: [199] distância: 1
+Limite superior: [299] distância: 99
+Resultado: 199
+Valor: 250
+Limite inferior: [199] distância: 51
+Limite superior: [299] distância: 49
+Resultado: 299
+Valor: 300
+Limite inferior: [299] distância: 1
+Limite superior: [399] distância: 99
+Resultado: 299
+Valor: 350
+Limite inferior: [299] distância: 51
+Limite superior: [399] distância: 49
+Resultado: 399
+Valor: 400
+Limite inferior: [399] distância: 1
+Limite superior: [499] distância: 99
+Resultado: 399
+Valor: 450
+Limite inferior: [399] distância: 51
+Limite superior: [499] distância: 49
+Resultado: 499
+Valor: 500
+Limite inferior: [499] distância: 1
+Limite superior: [599] distância: 99
+Resultado: 499
+Valor: 550
+Limite inferior: [499] distância: 51
+Limite superior: [599] distância: 49
+Resultado: 599
+Valor: 600
+Limite inferior: [599] distância: 1
+Limite superior: [699] distância: 99
+Resultado: 599
+Valor: 650
+Limite inferior: [599] distância: 51
+Limite superior: [699] distância: 49
+Resultado: 699
+Valor: 700
+Limite inferior: [699] distância: 1
+Limite superior: [799] distância: 99
+Resultado: 699
+Valor: 750
+Limite inferior: [699] distância: 51
+Limite superior: [799] distância: 49
+Resultado: 799
+Valor: 800
+Limite inferior: [799] distância: 1
+Limite superior: [899] distância: 99
+Resultado: 799
+Valor: 850
+Limite inferior: [799] distância: 51
+Limite superior: [899] distância: 49
+Resultado: 899
+Valor: 900
+Limite inferior: [899] distância: 1
+Limite superior: [999] distância: 99
+Resultado: 899
+Valor: 950
+Limite inferior: [899] distância: 51
+Limite superior: [999] distância: 49
+Resultado: 999
+Valor: 949
+Limite inferior: [899] distância: 50
+Limite superior: [999] distância: 50
+Resultado: 999
+Valor: 1000
+Limite inferior: [999] distância: 1
+Limite superior: [1099] distância: 99
+Resultado: 999
+Valor: 1002
+Limite inferior: [999] distância: 3
+Limite superior: [1099] distância: 97
+Resultado: 999
+Valor: 2001
+Limite inferior: [1999] distância: 2
+Limite superior: [2099] distância: 98
+Resultado: 1999
+Valor: 10000
+Limite inferior: [9999] distância: 1
+Limite superior: [10099] distância: 99
+Resultado: 9999
