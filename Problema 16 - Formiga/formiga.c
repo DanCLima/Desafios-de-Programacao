@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
                         x++;
                         direcao = CIMA;
                         qtd_passos = 0;
-			tam++;
+			            tam++;
                         continue;
                     } else if (direcao == CIMA) {
                         direcao = ESQUERDA;
@@ -50,7 +50,7 @@ int main(int argc, char const *argv[])
                         y++;
                         direcao = DIREITA;
                         qtd_passos = 0;
-			tam++;
+			            tam++;
                         continue;
                     }
                 }
